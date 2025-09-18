@@ -11,18 +11,27 @@ import { Badge } from "@/components/ui/badge";
 const NAME = "Kevin Lee";
 const ROLE = "Dartmouth College — B.S. Computer Science (Biology minor)";
 const LOCATION = "Hanover, NH";
-const EMAIL = "your_school_email@dartmouth.edu";     // update this
-const RESUME_URL = "/Kevin_Lee_Resume.pdf";          // in /public
-const GITHUB_URL = "https://github.com/yourhandle";  // update this
-const LINKEDIN_URL = "https://www.linkedin.com/in/yourhandle"; // update this
+const EMAIL = "your_school_email@dartmouth.edu";
+const RESUME_URL = "/Kevin_Lee_Resume.pdf";
+const GITHUB_URL = "https://github.com/yourhandle";
+const LINKEDIN_URL = "https://www.linkedin.com/in/yourhandle";
 
 // ====== SKILLS ======
-const SKILLS = [
-  "Python", "Java", "Kotlin", "JavaScript", "HTML", "CSS", "Excel"
-];
+const SKILLS = ["Python", "Java", "Kotlin", "JavaScript", "HTML", "CSS", "Excel"];
+
+// ----- Types -----
+type Project = {
+  title: string;
+  blurb: string;
+  tags: string[];
+  impact: string;
+  image?: string;
+  imageAlt?: string;
+  link?: string; // <-- optional link (fixes Vercel type error)
+};
 
 // ====== PROJECTS ======
-const PROJECTS = [
+const PROJECTS: Project[] = [
   {
     title: "OMAT — OculoMotor Assessment Tool",
     blurb:
@@ -31,7 +40,8 @@ const PROJECTS = [
     impact:
       "My role: organized and cleaned datasets, developed a Kotlin Android app to capture oculomotor metrics, and built parts of the website frontend. I also added timed outputs and categorization features to improve clinician workflows and speed up evaluations.",
     image: "/omat.jpg",
-    imageAlt: "OMAT concussion assessment device"
+    imageAlt: "OMAT concussion assessment device",
+    // link: "https://github.com/yourhandle/omat" // add when public
   },
   {
     title: "Real-Time Posture Tracking (Turtleneck Prevention)",
@@ -41,8 +51,9 @@ const PROJECTS = [
     impact:
       "My role: built the web server and interface to collect and organize posture data; defined criteria and angle-based categories from research literature; currently extending the system with machine learning models for more accurate classification.",
     image: "/posture.jpg",
-    imageAlt: "Spinal posture illustration"
-  }
+    imageAlt: "Spinal posture illustration",
+    // link: "https://github.com/yourhandle/posture-tracking"
+  },
 ];
 
 // ====== EXPERIENCE ======
@@ -53,8 +64,8 @@ const EXPERIENCE = [
     when: "Dec 2024 – Jan 2025 · Englewood, NJ",
     points: [
       "Organized & verified ~3 years of journal entries to prep internal audit.",
-      "Built a software flow that streamlined scanning/organization and cut manual processing time."
-    ]
+      "Built a software flow that streamlined scanning/organization and cut manual processing time.",
+    ],
   },
   {
     company: "Dartmouth CS Dept.",
@@ -62,9 +73,9 @@ const EXPERIENCE = [
     when: "Sep 2024 – Present · Hanover, NH",
     points: [
       "Graded assignments/exams and supported students during office hours.",
-      "Reviewed core data structures, algorithms, and debugging practices."
-    ]
-  }
+      "Reviewed core data structures, algorithms, and debugging practices.",
+    ],
+  },
 ];
 
 // ====== EDUCATION ======
@@ -74,9 +85,9 @@ const EDUCATION = [
     degree: "B.S. in Computer Science (Minor: Biology)",
     when: "Sep 2023 – Present · Hanover, NH",
     items: [
-      "Relevant: Data Structures, Algorithms, Databases, OOP, AI/ML, Systems/OS, HCI"
-    ]
-  }
+      "Relevant: Data Structures, Algorithms, Databases, OOP, AI/ML, Systems/OS, HCI",
+    ],
+  },
 ];
 
 function Pill({ text }: { text: string }) {
@@ -89,20 +100,38 @@ export default function Page() {
       {/* NAV */}
       <div className="sticky top-0 z-40 w-full backdrop-blur bg-white/70 border-b">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <a href="#home" className="font-semibold tracking-tight">{NAME}</a>
+          <a href="#home" className="font-semibold tracking-tight">
+            {NAME}
+          </a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#projects" className="hover:underline underline-offset-4">Projects</a>
-            <a href="#experience" className="hover:underline underline-offset-4">Experience</a>
-            <a href="#skills" className="hover:underline underline-offset-4">Skills</a>
-            <a href="#education" className="hover:underline underline-offset-4">Education</a>
-            <a href="#contact" className="hover:underline underline-offset-4">Contact</a>
+            <a href="#projects" className="hover:underline underline-offset-4">
+              Projects
+            </a>
+            <a href="#experience" className="hover:underline underline-offset-4">
+              Experience
+            </a>
+            <a href="#skills" className="hover:underline underline-offset-4">
+              Skills
+            </a>
+            <a href="#education" className="hover:underline underline-offset-4">
+              Education
+            </a>
+            <a href="#contact" className="hover:underline underline-offset-4">
+              Contact
+            </a>
           </nav>
           <div className="flex items-center gap-2">
             <Button asChild variant="secondary">
-              <a href={RESUME_URL} target="_blank" rel="noreferrer"><FileText className="h-4 w-4 mr-2" />Resume</a>
+              <a href={RESUME_URL} target="_blank" rel="noreferrer">
+                <FileText className="h-4 w-4 mr-2" />
+                Resume
+              </a>
             </Button>
             <Button asChild>
-              <a href={`mailto:${EMAIL}`}><Mail className="h-4 w-4 mr-2" />Contact</a>
+              <a href={`mailto:${EMAIL}`}>
+                <Mail className="h-4 w-4 mr-2" />
+                Contact
+              </a>
             </Button>
           </div>
         </div>
@@ -111,23 +140,43 @@ export default function Page() {
       {/* HERO */}
       <header id="home" className="relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+          >
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">{NAME}</h1>
             <p className="mt-2 text-lg text-gray-600">
-              {ROLE} • <span className="inline-flex items-center"><MapPin className="h-4 w-4 mx-1" />{LOCATION}</span>
+              {ROLE} •{" "}
+              <span className="inline-flex items-center">
+                <MapPin className="h-4 w-4 mx-1" />
+                {LOCATION}
+              </span>
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Button asChild>
-                <a href={RESUME_URL} target="_blank" rel="noreferrer"><FileText className="h-4 w-4 mr-2" />View Resume</a>
+                <a href={RESUME_URL} target="_blank" rel="noreferrer">
+                  <FileText className="h-4 w-4 mr-2" />
+                  View Resume
+                </a>
               </Button>
               <Button asChild variant="secondary">
-                <a href={GITHUB_URL} target="_blank" rel="noreferrer"><Github className="h-4 w-4 mr-2" />GitHub</a>
+                <a href={GITHUB_URL} target="_blank" rel="noreferrer">
+                  <Github className="h-4 w-4 mr-2" />
+                  GitHub
+                </a>
               </Button>
               <Button asChild variant="secondary">
-                <a href={LINKEDIN_URL} target="_blank" rel="noreferrer"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
+                <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+                  <Linkedin className="h-4 w-4 mr-2" />
+                  LinkedIn
+                </a>
               </Button>
               <Button asChild variant="outline">
-                <a href={`mailto:${EMAIL}`}><Mail className="h-4 w-4 mr-2" />Email</a>
+                <a href={`mailto:${EMAIL}`}>
+                  <Mail className="h-4 w-4 mr-2" />
+                  Email
+                </a>
               </Button>
             </div>
           </motion.div>
@@ -137,7 +186,8 @@ export default function Page() {
       {/* PROJECTS */}
       <section id="projects" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="flex items-center gap-2 mb-4">
-          <Code2 className="h-5 w-5" /><h2 className="text-2xl font-semibold">Projects</h2>
+          <Code2 className="h-5 w-5" />
+          <h2 className="text-2xl font-semibold">Projects</h2>
         </div>
         <div className="grid sm:grid-cols-2 gap-6">
           {PROJECTS.map((p) => (
@@ -149,7 +199,7 @@ export default function Page() {
                     alt={p.imageAlt ?? p.title}
                     fill
                     className="object-cover"
-                    priority={true}
+                    priority
                   />
                 </div>
               )}
@@ -159,16 +209,23 @@ export default function Page() {
               <CardContent className="space-y-3">
                 <p className="text-sm text-gray-600">{p.blurb}</p>
                 <div className="flex flex-wrap gap-2">
-                  {p.tags.map((t) => <Pill key={t} text={t} />)}
+                  {p.tags.map((t) => (
+                    <Pill key={t} text={t} />
+                  ))}
                 </div>
                 <div className="text-sm text-gray-500">{p.impact}</div>
-                {p.link && (
+                {p.link ? (
                   <div className="pt-1">
-                    <a className="inline-flex items-center text-sm underline underline-offset-4" href={p.link} target="_blank" rel="noreferrer">
+                    <a
+                      className="inline-flex items-center text-sm underline underline-offset-4"
+                      href={p.link}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       View repo <ExternalLink className="h-4 w-4 ml-1" />
                     </a>
                   </div>
-                )}
+                ) : null}
               </CardContent>
             </Card>
           ))}
@@ -183,13 +240,17 @@ export default function Page() {
             <Card key={e.company} className="rounded-2xl">
               <CardHeader className="pb-2">
                 <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
-                  <CardTitle className="text-xl">{e.role} • {e.company}</CardTitle>
+                  <CardTitle className="text-xl">
+                    {e.role} • {e.company}
+                  </CardTitle>
                   <span className="text-sm text-gray-500">{e.when}</span>
                 </div>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                  {e.points.map((pt, i) => <li key={i}>{pt}</li>)}
+                  {e.points.map((pt, i) => (
+                    <li key={i}>{pt}</li>
+                  ))}
                 </ul>
               </CardContent>
             </Card>
@@ -201,7 +262,9 @@ export default function Page() {
       <section id="skills" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <h2 className="text-2xl font-semibold mb-4">Technical Skills</h2>
         <div className="flex flex-wrap gap-2">
-          {SKILLS.map((s) => <Pill key={s} text={s} />)}
+          {SKILLS.map((s) => (
+            <Pill key={s} text={s} />
+          ))}
         </div>
       </section>
 
@@ -211,12 +274,16 @@ export default function Page() {
         <div className="grid sm:grid-cols-2 gap-6">
           {EDUCATION.map((ed) => (
             <Card key={ed.school} className="rounded-2xl">
-              <CardHeader><CardTitle>{ed.school}</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>{ed.school}</CardTitle>
+              </CardHeader>
               <CardContent className="space-y-2">
                 <div className="text-gray-700">{ed.degree}</div>
                 <div className="text-sm text-gray-500">{ed.when}</div>
                 <ul className="list-disc pl-5 text-gray-700">
-                  {ed.items.map((it, i) => <li key={i}>{it}</li>)}
+                  {ed.items.map((it, i) => (
+                    <li key={i}>{it}</li>
+                  ))}
                 </ul>
               </CardContent>
             </Card>
@@ -228,9 +295,24 @@ export default function Page() {
       <section id="contact" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         <h2 className="text-2xl font-semibold mb-4">Contact</h2>
         <div className="flex flex-wrap items-center gap-3">
-          <Button asChild variant="default"><a href={`mailto:${EMAIL}`}><Mail className="h-4 w-4 mr-2" />Email</a></Button>
-          <Button asChild variant="secondary"><a href={GITHUB_URL} target="_blank" rel="noreferrer"><Github className="h-4 w-4 mr-2" />GitHub</a></Button>
-          <Button asChild variant="secondary"><a href={LINKEDIN_URL} target="_blank" rel="noreferrer"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a></Button>
+          <Button asChild variant="default">
+            <a href={`mailto:${EMAIL}`}>
+              <Mail className="h-4 w-4 mr-2" />
+              Email
+            </a>
+          </Button>
+          <Button asChild variant="secondary">
+            <a href={GITHUB_URL} target="_blank" rel="noreferrer">
+              <Github className="h-4 w-4 mr-2" />
+              GitHub
+            </a>
+          </Button>
+          <Button asChild variant="secondary">
+            <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+              <Linkedin className="h-4 w-4 mr-2" />
+              LinkedIn
+            </a>
+          </Button>
         </div>
       </section>
 
