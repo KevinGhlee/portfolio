@@ -1,103 +1,242 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { Mail, Github, Linkedin, FileText, ExternalLink, MapPin, Code2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-export default function Home() {
+// ====== PERSONALIZE ======
+const NAME = "Kevin Lee";
+const ROLE = "Dartmouth College — B.S. Computer Science (Biology minor)";
+const LOCATION = "Hanover, NH";
+const EMAIL = "your_school_email@dartmouth.edu";     // update this
+const RESUME_URL = "/Kevin_Lee_Resume.pdf";          // in /public
+const GITHUB_URL = "https://github.com/yourhandle";  // update this
+const LINKEDIN_URL = "https://www.linkedin.com/in/yourhandle"; // update this
+
+// ====== SKILLS ======
+const SKILLS = [
+  "Python", "Java", "Kotlin", "JavaScript", "HTML", "CSS", "Excel"
+];
+
+// ====== PROJECTS ======
+const PROJECTS = [
+  {
+    title: "OMAT — OculoMotor Assessment Tool",
+    blurb:
+      "The OculoMotor Assessment Tool (OMAT) is a standardized clinical tool that measures eye movements (saccades, vergence) and binocular vision functions (e.g., accommodative amplitude, near-point of convergence). It provides normative data for clinicians to assess vision, particularly in patients recovering from concussion-related symptoms.",
+    tags: ["Kotlin", "Android", "Web Frontend", "Data"],
+    impact:
+      "My role: organized and cleaned datasets, developed a Kotlin Android app to capture oculomotor metrics, and built parts of the website frontend. I also added timed outputs and categorization features to improve clinician workflows and speed up evaluations.",
+    image: "/omat.jpg",
+    imageAlt: "OMAT concussion assessment device"
+  },
+  {
+    title: "Real-Time Posture Tracking (Turtleneck Prevention)",
+    blurb:
+      "This system uses device gyroscope sensors and image processing to monitor head/neck posture in real time. It applies research-based angle thresholds to identify forward-head posture ('turtleneck') and provides at-home screening feedback.",
+    tags: ["Web Server", "JavaScript", "Sensors", "Image Processing", "Data"],
+    impact:
+      "My role: built the web server and interface to collect and organize posture data; defined criteria and angle-based categories from research literature; currently extending the system with machine learning models for more accurate classification.",
+    image: "/posture.jpg",
+    imageAlt: "Spinal posture illustration"
+  }
+];
+
+// ====== EXPERIENCE ======
+const EXPERIENCE = [
+  {
+    company: "Hiossen Implant",
+    role: "Accounting/Software Intern",
+    when: "Dec 2024 – Jan 2025 · Englewood, NJ",
+    points: [
+      "Organized & verified ~3 years of journal entries to prep internal audit.",
+      "Built a software flow that streamlined scanning/organization and cut manual processing time."
+    ]
+  },
+  {
+    company: "Dartmouth CS Dept.",
+    role: "Teaching Assistant, COSC 10 (OOP in Java)",
+    when: "Sep 2024 – Present · Hanover, NH",
+    points: [
+      "Graded assignments/exams and supported students during office hours.",
+      "Reviewed core data structures, algorithms, and debugging practices."
+    ]
+  }
+];
+
+// ====== EDUCATION ======
+const EDUCATION = [
+  {
+    school: "Dartmouth College",
+    degree: "B.S. in Computer Science (Minor: Biology)",
+    when: "Sep 2023 – Present · Hanover, NH",
+    items: [
+      "Relevant: Data Structures, Algorithms, Databases, OOP, AI/ML, Systems/OS, HCI"
+    ]
+  }
+];
+
+function Pill({ text }: { text: string }) {
+  return <Badge className="rounded-full px-3 py-1 text-sm">{text}</Badge>;
+}
+
+export default function Page() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="min-h-screen text-gray-900">
+      {/* NAV */}
+      <div className="sticky top-0 z-40 w-full backdrop-blur bg-white/70 border-b">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <a href="#home" className="font-semibold tracking-tight">{NAME}</a>
+          <nav className="hidden md:flex items-center gap-6 text-sm">
+            <a href="#projects" className="hover:underline underline-offset-4">Projects</a>
+            <a href="#experience" className="hover:underline underline-offset-4">Experience</a>
+            <a href="#skills" className="hover:underline underline-offset-4">Skills</a>
+            <a href="#education" className="hover:underline underline-offset-4">Education</a>
+            <a href="#contact" className="hover:underline underline-offset-4">Contact</a>
+          </nav>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="secondary">
+              <a href={RESUME_URL} target="_blank" rel="noreferrer"><FileText className="h-4 w-4 mr-2" />Resume</a>
+            </Button>
+            <Button asChild>
+              <a href={`mailto:${EMAIL}`}><Mail className="h-4 w-4 mr-2" />Contact</a>
+            </Button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </div>
+
+      {/* HERO */}
+      <header id="home" className="relative overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">{NAME}</h1>
+            <p className="mt-2 text-lg text-gray-600">
+              {ROLE} • <span className="inline-flex items-center"><MapPin className="h-4 w-4 mx-1" />{LOCATION}</span>
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Button asChild>
+                <a href={RESUME_URL} target="_blank" rel="noreferrer"><FileText className="h-4 w-4 mr-2" />View Resume</a>
+              </Button>
+              <Button asChild variant="secondary">
+                <a href={GITHUB_URL} target="_blank" rel="noreferrer"><Github className="h-4 w-4 mr-2" />GitHub</a>
+              </Button>
+              <Button asChild variant="secondary">
+                <a href={LINKEDIN_URL} target="_blank" rel="noreferrer"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
+              </Button>
+              <Button asChild variant="outline">
+                <a href={`mailto:${EMAIL}`}><Mail className="h-4 w-4 mr-2" />Email</a>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </header>
+
+      {/* PROJECTS */}
+      <section id="projects" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="flex items-center gap-2 mb-4">
+          <Code2 className="h-5 w-5" /><h2 className="text-2xl font-semibold">Projects</h2>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-6">
+          {PROJECTS.map((p) => (
+            <Card key={p.title} className="rounded-2xl shadow-sm overflow-hidden">
+              {p.image && (
+                <div className="relative w-full h-44">
+                  <Image
+                    src={p.image}
+                    alt={p.imageAlt ?? p.title}
+                    fill
+                    className="object-cover"
+                    priority={true}
+                  />
+                </div>
+              )}
+              <CardHeader>
+                <CardTitle className="text-lg">{p.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-gray-600">{p.blurb}</p>
+                <div className="flex flex-wrap gap-2">
+                  {p.tags.map((t) => <Pill key={t} text={t} />)}
+                </div>
+                <div className="text-sm text-gray-500">{p.impact}</div>
+                {p.link && (
+                  <div className="pt-1">
+                    <a className="inline-flex items-center text-sm underline underline-offset-4" href={p.link} target="_blank" rel="noreferrer">
+                      View repo <ExternalLink className="h-4 w-4 ml-1" />
+                    </a>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* EXPERIENCE */}
+      <section id="experience" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <h2 className="text-2xl font-semibold mb-4">Experience</h2>
+        <div className="space-y-4">
+          {EXPERIENCE.map((e) => (
+            <Card key={e.company} className="rounded-2xl">
+              <CardHeader className="pb-2">
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
+                  <CardTitle className="text-xl">{e.role} • {e.company}</CardTitle>
+                  <span className="text-sm text-gray-500">{e.when}</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                  {e.points.map((pt, i) => <li key={i}>{pt}</li>)}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* SKILLS */}
+      <section id="skills" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <h2 className="text-2xl font-semibold mb-4">Technical Skills</h2>
+        <div className="flex flex-wrap gap-2">
+          {SKILLS.map((s) => <Pill key={s} text={s} />)}
+        </div>
+      </section>
+
+      {/* EDUCATION */}
+      <section id="education" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <h2 className="text-2xl font-semibold mb-4">Education</h2>
+        <div className="grid sm:grid-cols-2 gap-6">
+          {EDUCATION.map((ed) => (
+            <Card key={ed.school} className="rounded-2xl">
+              <CardHeader><CardTitle>{ed.school}</CardTitle></CardHeader>
+              <CardContent className="space-y-2">
+                <div className="text-gray-700">{ed.degree}</div>
+                <div className="text-sm text-gray-500">{ed.when}</div>
+                <ul className="list-disc pl-5 text-gray-700">
+                  {ed.items.map((it, i) => <li key={i}>{it}</li>)}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <h2 className="text-2xl font-semibold mb-4">Contact</h2>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button asChild variant="default"><a href={`mailto:${EMAIL}`}><Mail className="h-4 w-4 mr-2" />Email</a></Button>
+          <Button asChild variant="secondary"><a href={GITHUB_URL} target="_blank" rel="noreferrer"><Github className="h-4 w-4 mr-2" />GitHub</a></Button>
+          <Button asChild variant="secondary"><a href={LINKEDIN_URL} target="_blank" rel="noreferrer"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a></Button>
+        </div>
+      </section>
+
+      <footer className="py-10 text-center text-sm text-gray-500">
+        © {new Date().getFullYear()} {NAME}. Built with Next.js + Tailwind.
       </footer>
-    </div>
+    </main>
   );
 }
