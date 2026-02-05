@@ -2,8 +2,8 @@
 
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Mail,
   Github,
@@ -54,15 +54,16 @@ function SectionTitle({
         <span className="icon-chip">
           <Icon className="h-5 w-5" />
         </span>
-        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-emerald-50">
+        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-950 font-display">
           {text}
         </h2>
       </div>
       {subtitle && (
-        <p className="mt-2 text-sm md:text-base text-emerald-50/65">
+        <p className="mt-2 text-sm md:text-base text-slate-600">
           {subtitle}
         </p>
       )}
+      <div className="section-line" />
     </div>
   );
 }
@@ -77,6 +78,7 @@ function Pill({ text }: { text: string }) {
 const PROJECTS = [
   {
     title: "OMAT — Oculomotor Movement Analysis Tool",
+    status: "Completed",
     blurb:
       "Designed a medical imaging pipeline processing MRI/fMRI/DTI inputs via FSL (motion correction, registration, ROI analysis) and delivered results to a mobile app. Built an Android visualization layer using WebView and JavaScript medical imaging viewers for slice navigation and overlay rendering.",
     impact:
@@ -87,6 +89,7 @@ const PROJECTS = [
   },
   {
     title: "Smart Posture — Real-Time Sensor System",
+    status: "Completed",
     blurb:
       "Built real-time sitting posture simulations using reusable Three.js components modeling vertical and horizontal spine inclination. Classified posture states from pressure sensors (FSRs, textile sensors), accelerometers, and gyroscopes using data from 113 student participants.",
     impact:
@@ -94,6 +97,15 @@ const PROJECTS = [
     tags: ["C", "JavaScript", "Three.js", "Sensors"],
     image: "/posture.jpg",
     imageAlt: "Posture visualization",
+  },
+  {
+    title: "GroupTrip.ai — Collaborative Group Travel Planner",
+    status: "In Progress",
+    blurb:
+      "Building a group trip planning app that turns preferences into a shared itinerary. Includes travel-style profiles, group chat with voting, and automated route optimization for destinations and activities.",
+    impact:
+      "Goal: make group trips actually happen by reducing planning effort while keeping everyone’s preferences in the loop.",
+    tags: ["Full-Stack", "UX", "Planning", "Collaboration", "AI/ML"],
   },
 ];
 
@@ -190,25 +202,63 @@ function useMounted() {
   return mounted;
 }
 
-type LeafSpec = {
+type CellSpec = {
   id: number;
   left: string;
+  top: string;
+  size: number;
   delay: string;
-  duration: string;
-  size: "sm" | "md" | "lg";
   opacity: number;
+  dx: string;
+  dy: string;
+  driftX: string;
+  driftY: string;
 };
 
-function makeLeaves(count = 10): LeafSpec[] {
-  const sizes: LeafSpec["size"][] = ["sm", "md", "lg"];
+function makeCells(count = 120): CellSpec[] {
   return Array.from({ length: count }).map((_, i) => {
-    const left = `${Math.floor(Math.random() * 100)}%`;
-    const delay = `${Math.random() * 10}s`;
-    const duration = `${30 + Math.random() * 18}s`;
-    const size = sizes[Math.floor(Math.random() * sizes.length)];
-    const opacity = 0.10 + Math.random() * 0.18;
-    return { id: i, left, delay, duration, size, opacity };
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 8 + Math.random() * 36;
+    const centerX = 50;
+    const centerY = 32;
+    const left = `${centerX + Math.cos(angle) * radius}%`;
+    const top = `${centerY + Math.sin(angle) * radius}%`;
+    const size = 6 + Math.random() * 14;
+    const delay = `${Math.random() * 1.6}s`;
+    const opacity = 0.18 + Math.random() * 0.55;
+    const dx = `${(Math.random() * 2 - 1) * 120}px`;
+    const dy = `${(Math.random() * 2 - 1) * 120}px`;
+    const driftX = `${(Math.random() * 2 - 1) * 32}px`;
+    const driftY = `${(Math.random() * 2 - 1) * 32}px`;
+    return { id: i, left, top, size, delay, opacity, dx, dy, driftX, driftY };
   });
+}
+
+function CellularField({ cells }: { cells: CellSpec[] }) {
+  return (
+    <div className="cellular-field" aria-hidden="true">
+      {cells.map((c) => (
+        <span
+          key={c.id}
+          className="cell"
+          style={
+            {
+              left: c.left,
+              top: c.top,
+              width: `${c.size}px`,
+              height: `${c.size}px`,
+              ["--delay" as string]: c.delay,
+              ["--opacity" as string]: c.opacity,
+              ["--dx" as string]: c.dx,
+              ["--dy" as string]: c.dy,
+              ["--drift-x" as string]: c.driftX,
+              ["--drift-y" as string]: c.driftY,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </div>
+  );
 }
 
 /* =========================
@@ -218,40 +268,26 @@ export default function Page() {
   useSpotlight();
 
   const mounted = useMounted();
-  const [leaves, setLeaves] = useState<LeafSpec[]>([]);
+  const [cells, setCells] = useState<CellSpec[]>([]);
+  const { scrollYProgress, scrollY } = useScroll();
+  const gridShift = useTransform(scrollY, [0, 800], [0, -40]);
 
   useEffect(() => {
-    if (mounted) setLeaves(makeLeaves(10));
+    if (mounted) setCells(makeCells(130));
   }, [mounted]);
+
+  const nameChars = FULL_NAME.split("");
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
       {/* Background layers */}
-      <div className="bg-stage" />
-      <div className="bg-noise" />
-      <div className="bg-smooth" />
-      <div className="bg-blobs" />
+      <div className="bg-base" />
+      <div className="bg-glow" />
+      <motion.div className="bg-grid" style={{ y: gridShift }} />
       <div className="bg-spotlight" />
 
-      {/* Leaves (client-only to avoid hydration mismatch) */}
-      {mounted && (
-        <div className="leaf-layer" aria-hidden="true">
-          {leaves.map((l) => (
-            <span
-              key={l.id}
-              className={`leaf ${l.size}`}
-              style={{
-                left: l.left,
-                animationDelay: l.delay,
-                animationDuration: l.duration,
-                opacity: l.opacity,
-              }}
-            >
-              🍃
-            </span>
-          ))}
-        </div>
-      )}
+      {/* Cellular field (client-only to avoid hydration mismatch) */}
+      {mounted && <CellularField cells={cells} />}
 
       {/* Header */}
       <header className="relative z-10 max-w-6xl mx-auto px-6 pt-10 md:pt-14">
@@ -260,7 +296,7 @@ export default function Page() {
             <span className="icon-chip">
               <Leaf className="h-5 w-5" />
             </span>
-            <span className="font-semibold tracking-tight text-emerald-50/95">
+            <span className="font-semibold tracking-tight text-slate-900/90">
               {NAME}
             </span>
           </div>
@@ -285,20 +321,46 @@ export default function Page() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: "easeOut" }}
-          className="mt-10 md:mt-14 grid place-items-center text-center"
+          className="mt-10 md:mt-14 min-h-screen grid place-items-center text-center"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200/10 bg-white/5 backdrop-blur-md">
-            <Sparkles className="h-4 w-4 text-emerald-200" />
-            <span className="text-sm text-emerald-50/90">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200/70 bg-white/70 backdrop-blur-md">
+            <Sparkles className="h-4 w-4 text-blue-600" />
+            <span className="text-sm text-slate-700">
               Systems • Networking • Security • ML Tooling
             </span>
           </div>
 
-          <h1 className="mt-5 text-4xl md:text-6xl font-bold tracking-tight text-emerald-50">
-            {FULL_NAME}
-          </h1>
+          <div className="relative mt-5">
+            <div className="name-glow" aria-hidden="true" />
+            <motion.h1
+              className="text-4xl md:text-6xl font-semibold tracking-tight text-slate-950 font-display name-scramble"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.035, delayChildren: 0.1 },
+                },
+              }}
+            >
+              {nameChars.map((char, index) => (
+                <motion.span
+                  key={`${char}-${index}`}
+                  className="inline-block"
+                  variants={{
+                    hidden: { y: 12, opacity: 0 },
+                    show: { y: 0, opacity: 1 },
+                  }}
+                  transition={{ duration: 0.45, ease: "easeOut" }}
+                >
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+            </motion.h1>
+          </div>
 
-          <p className="mt-3 text-emerald-50/70">
+          <p className="mt-3 text-slate-600">
             {ROLE} •{" "}
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-4 w-4" />
@@ -306,10 +368,11 @@ export default function Page() {
             </span>
           </p>
 
-          <p className="mt-5 max-w-3xl text-balance text-emerald-50/75 leading-relaxed">
-            I build production-ready systems and interfaces with a focus on performance,
-            reliability, and security. Recent work includes DDoS mitigation research,
-            large-scale analytics pipelines, and interactive 3D + ML-backed tooling.
+          <p className="mt-5 max-w-3xl text-balance text-slate-600 leading-relaxed">
+            I’m Kevin Lee, a CS student who loves the intersection of cybersecurity,
+            networked systems, and ML/AI, with hands-on full-stack experience in research
+            and production. I’m drawn to esports infrastructure—where reliability, latency,
+            and security matter most. Outside of code, I compose, paint, and play video games.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -330,6 +393,13 @@ export default function Page() {
               {EMAIL}
             </a>
           </div>
+
+          <div className="mt-10 flex items-center justify-center">
+            <div className="scroll-indicator">
+              <span className="scroll-dot" />
+              Scroll to explore
+            </div>
+          </div>
         </motion.div>
       </header>
 
@@ -344,34 +414,40 @@ export default function Page() {
                 key={p.title}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -6, rotateX: 1.2, rotateY: -1.2 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.45 }}
-                className="card-wrap"
+                className="card-wrap tilt-card"
               >
                 <Card className="card-glass">
                   {p.image && (
-                    <div className="relative w-full h-44 overflow-hidden rounded-t-3xl">
+                    <div className="relative w-full h-44 overflow-hidden rounded-t-3xl media-wrap bg-white/80">
                       <Image
                         src={p.image}
                         alt={p.imageAlt ?? p.title}
                         fill
-                        className="object-cover"
+                        className="object-contain object-center media-img p-3"
                         priority
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                     </div>
                   )}
 
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg text-emerald-50">{p.title}</CardTitle>
+                    <div className="status-row">
+                      <span className={`status-pill ${p.status === "Completed" ? "done" : "progress"}`}>
+                        {p.status}
+                      </span>
+                    </div>
+                    <CardTitle className="text-lg text-slate-900">{p.title}</CardTitle>
                   </CardHeader>
 
                   <CardContent className="space-y-3 pb-6">
-                    <p className="text-sm text-emerald-50/75 leading-relaxed">{p.blurb}</p>
+                    <p className="text-sm text-slate-600 leading-relaxed">{p.blurb}</p>
                     <div className="flex flex-wrap gap-2">
                       {p.tags.map((t) => <Pill key={t} text={t} />)}
                     </div>
-                    <p className="text-xs text-emerald-100/60">{p.impact}</p>
+                    <p className="text-xs text-slate-500">{p.impact}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -393,23 +469,25 @@ export default function Page() {
                 key={e.company + e.role}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -4, rotateX: 0.6, rotateY: -0.6 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.45 }}
+                className="tilt-card"
               >
                 <Card className="card-glass rounded-2xl">
                   <CardHeader className="pb-2">
                     <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 md:gap-6 items-start">
-                      <CardTitle className="text-xl text-emerald-50 leading-snug">
+                      <CardTitle className="text-xl text-slate-900 leading-snug">
                         {e.role} • {e.company}
                       </CardTitle>
-                      <div className="text-sm text-emerald-50/60 md:text-right md:whitespace-nowrap">
+                      <div className="text-sm text-slate-500 md:text-right md:whitespace-nowrap">
                         {e.when}
                       </div>
                     </div>
                   </CardHeader>
 
                   <CardContent>
-                    <ul className="list-disc pl-5 space-y-1 text-emerald-50/75">
+                    <ul className="list-disc pl-5 space-y-1 text-slate-600">
                       {e.bullets.map((b, i) => <li key={i}>{b}</li>)}
                     </ul>
                   </CardContent>
@@ -426,13 +504,13 @@ export default function Page() {
             <CardContent className="py-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <div className="font-medium mb-2 text-emerald-50">Completed</div>
+                  <div className="font-medium mb-2 text-slate-900">Completed</div>
                   <div className="flex flex-wrap gap-2">
                     {COURSEWORK.completed.map((c) => <Pill key={c} text={c} />)}
                   </div>
                 </div>
                 <div>
-                  <div className="font-medium mb-2 text-emerald-50">Currently taking</div>
+                  <div className="font-medium mb-2 text-slate-900">Currently taking</div>
                   <div className="flex flex-wrap gap-2">
                     {COURSEWORK.current.map((c) => <Pill key={c} text={c} />)}
                   </div>
@@ -451,12 +529,14 @@ export default function Page() {
                 key={g.name}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -4, rotateX: 0.6, rotateY: -0.6 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.45 }}
+                className="tilt-card"
               >
                 <Card className="card-glass rounded-2xl">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg text-emerald-50">{g.name}</CardTitle>
+                    <CardTitle className="text-lg text-slate-900">{g.name}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-wrap gap-2 pb-6">
                     {g.items.map((i) => <Pill key={i} text={i} />)}
@@ -486,10 +566,12 @@ export default function Page() {
           </div>
         </section>
 
-        <footer className="pt-16 text-center text-sm text-emerald-50/45">
+        <footer className="pt-16 text-center text-sm text-slate-400">
           © {new Date().getFullYear()} {FULL_NAME}. Built with Next.js + Tailwind.
         </footer>
       </div>
+
+      <motion.div className="scroll-progress" style={{ scaleY: scrollYProgress }} />
     </main>
   );
 }
