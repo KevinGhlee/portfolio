@@ -75,7 +75,17 @@ function Pill({ text }: { text: string }) {
 /* =========================
    Content (UPDATED from resume)
    ========================= */
-const PROJECTS = [
+type Project = {
+  title: string;
+  status: "Completed" | "In Progress";
+  blurb: string;
+  impact: string;
+  tags: string[];
+  image?: string;
+  imageAlt?: string;
+};
+
+const PROJECTS: Project[] = [
   {
     title: "OMAT — Oculomotor Movement Analysis Tool",
     status: "Completed",
