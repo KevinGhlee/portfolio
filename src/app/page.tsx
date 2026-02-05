@@ -1,419 +1,222 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { motion } from "framer-motion";
-import {
-  Mail,
-  Github,
-  Linkedin,
-  FileText,
-  MapPin,
-  Leaf,
-  ExternalLink,
-  Code2,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import * as React from 'react';
+import Link from 'next/link';
+import { Mail, Github, Linkedin, FileText } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
-// ====== PERSONALIZE ======
-const NAME = "Kevin Lee";
-const ROLE = "Dartmouth College — B.S. Computer Science";
-const LOCATION = "Hanover, NH";
-const EMAIL = "kevin.ghlee@gmail.com";
+const RESUME_URL = '/Kevin_Lee_RESUME.pdf?v=2';
 
-// Put the new PDF into /public with this exact name:
-const RESUME_URL = "/Kevin_Lee_RESUME.pdf?v=1";
-
-const GITHUB_URL = "https://github.com/KevinGhlee";
-const LINKEDIN_URL = "https://www.linkedin.com/in/kevin-ghlee"; // from your resume
-
-// ====== LEAFY THEME HELPERS ======
-function SectionTitle({ icon: Icon, text }: { icon: any; text: string }) {
-  return (
-    <div className="flex items-center gap-2 mb-4">
-      <Icon className="h-5 w-5 text-emerald-500" />
-      <h2 className="text-2xl font-semibold">{text}</h2>
-    </div>
-  );
-}
-function Pill({ text }: { text: string }) {
-  return <Badge className="rounded-full px-3 py-1 text-sm">{text}</Badge>;
-}
-
-// ====== DATA FROM YOUR RESUME ======
-const PROJECTS = [
-  {
-    title: "OMAT — Oculomotor Movement Analysis Tool",
-    blurb:
-      "MRI/fMRI/DTI medical imaging pipeline with FSL (motion correction, registration, ROI analysis) delivering results to a mobile app. Android visualization via WebView and JS imaging viewers for slice navigation and overlays.",
-    impact:
-      "Improved concussion screening accuracy from 78% → 94% through automated preprocessing & feature extraction.",
-    tags: ["Kotlin", "Python", "JavaScript", "FSL", "Imaging"],
-    image: "/omat.jpg",
-    imageAlt: "OMAT device",
-  },
-  {
-    title: "Smart Posture — Real-Time Sensor System",
-    blurb:
-      "Classified posture from pressure sensors (FSRs/textile), accelerometers & gyros (113 participants) with real-time browser visualization and 3D feedback built using reusable Three.js components.",
-    impact:
-      "Modeled vertical/horizontal spine inclination and delivered real-time severity classification & feedback.",
-    tags: ["C", "JavaScript", "Three.js", "Sensors", "Data Viz"],
-    image: "/posture.jpg",
-    imageAlt: "Spinal posture illustration",
-  },
-];
-
-const EXPERIENCE = [
-  {
-    company: "The Dartmouth (Student Newspaper)",
-    role: "Software Engineer (Full-Stack)",
-    when: "Sept 2025 – Present · Hanover, NH",
-    bullets: [
-      "Built production React and React Three Fiber interfaces integrating generative-AI analytics for Monumetric ad data.",
-      "Designed Node.js REST services to process large-scale ad impressions & interactions from external partners.",
-      "Shipped data-driven tooling with design/business teams for editors and operations staff.",
-    ],
-  },
-  {
-    company: "Thayer School of Engineering, Dartmouth",
-    role: "Undergraduate Research Assistant — Cybersecurity Systems",
-    when: "Sept 2024 – Present · Hanover, NH",
-    bullets: [
-      "Prototyped multi-layer DDoS mitigation: real-time traffic sensors (port mirroring, sFlow) + L3/4 + L7 filtering.",
-      "Modeled edge mitigation via BGP RTBH & FlowSpec to drop attack traffic at routers/PoPs.",
-      "Simulated attack scenarios; evaluated ML-based detection accuracy vs time-to-mitigation.",
-    ],
-  },
-  {
-    company: "Hiossen Implant (U.S. division of Osstem Implant)",
-    role: "Software Engineering Intern",
-    when: "Jun 2025 – Sept 2025 · Englewood, NJ",
-    bullets: [
-      "Built reusable Three.js components for interactive dental lab simulations.",
-      "Improved internal clinical support chatbot using RAG + few-shot prompting in Python/LangChain.",
-      "Integrated 3D interfaces with ML services for procedural visuals + AI guidance.",
-    ],
-  },
-  {
-    company: "Dartmouth College",
-    role: "Computer Science Teaching Assistant — CS50",
-    when: "Sept 2024 – Present",
-    bullets: [
-      "Supported students building C programs on Linux.",
-      "Debugged memory, file I/O, and socket-networking issues.",
-    ],
-  },
-];
-
-const COURSEWORK = {
-  completed: [
-    "Object-Oriented Programming",
-    "Discrete Mathematics",
-    "Algorithms",
-    "Software Implementation",
-    "Cybersecurity",
-    "Machine Learning",
-  ],
-  current: ["Fullstack Development", "Knot Theory with Reinforcement Learning"],
+type Project = {
+  title: string;
+  blurb: string;
+  image: string;        // path under /public
+  tags: string[];
+  repo?: string;        // optional repo/demo link
 };
 
-const SKILLS = [
+const PROJECTS: Project[] = [
   {
-    name: "Languages",
-    items: ["Python", "JavaScript", "C", "C++", "Java", "Kotlin"],
+    title: 'OMAT — OculoMotor Assessment Tool',
+    blurb:
+      'Android app + web backend to capture oculomotor metrics (saccades, vergence, accommodation) and help clinicians track concussion recovery. I built the mobile data capture, organized datasets, and contributed to the web UI.',
+    image: '/omat.jpg',
+    tags: ['Kotlin', 'Flask/Web', 'Data', 'Health'],
+    repo: undefined, // add later if public
   },
   {
-    name: "Systems / Backend",
-    items: ["Node.js", "REST APIs", "Linux", "TCP/IP", "Sockets"],
+    title: 'Real-Time Posture Tracking (Turtleneck Prevention)',
+    blurb:
+      'At-home head/neck posture monitor using device gyroscope and image processing. I built the web server + interface, designed angle-based thresholds from literature to flag forward-head posture, and started an ML fusion path.',
+    image: '/posture.jpg',
+    tags: ['Web', 'Sensors', 'Visualization', 'ML (in-progress)'],
+    repo: undefined, // add later if public
   },
-  {
-    name: "Frontend / Viz",
-    items: ["React", "React Three Fiber", "Three.js"],
-  },
-  {
-    name: "ML / Data",
-    items: ["NumPy", "scikit-learn", "LangChain", "RAG pipelines"],
-  },
-  { name: "Tools", items: ["Git", "Docker", "Bash"] },
 ];
+
+const SKILLS: Record<string, string[]> = {
+  Languages: ['Python', 'C/C++', 'Java', 'Kotlin', 'TypeScript/JavaScript'],
+  Frameworks: ['Next.js', 'React', 'Tailwind', 'Flask'],
+  Systems: ['Git/GitHub', 'Linux', 'Networking & DDoS basics'],
+  Data: ['Pandas', 'NumPy', 'scikit-learn (basics)'],
+};
+
+const COURSEWORK = [
+  'CS 10 (OOP)',
+  'CS 30 (Discrete Math)',
+  'CS 31 (Algorithms)',
+  'CS 50 (Software Implementation)',
+  'CS 69 (Cybersecurity)',
+  'CS 74 (Machine Learning)',
+  'CS 52 (Full-Stack)',
+  'Math 32 (Knot Theory)',
+];
+
+function ExternalLink(props: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const { href, children, className } = props;
+  return (
+    <a
+      className={className}
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {children}
+    </a>
+  );
+}
 
 export default function Page() {
   return (
-    <main className="min-h-screen text-gray-900 bg-emerald-50">
-      {/* leafy gradient header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="h-[380px] bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950" />
-        </div>
+    <main className="container py-10 space-y-12">
+      {/* Header */}
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">Kevin Lee</h1>
+          <p className="mt-2 text-muted-foreground">
+            Dartmouth College — B.S. in Computer Science • Hanover, NH
+          </p>
+          <p className="mt-2 max-w-2xl">
+            I’m a problem-solver who enjoys building clean, fast software and
+            applying ML when it genuinely helps. I also make time for art
+            (drawing, photography) and music (piano/composition)—the craft side
+            keeps my engineering thoughtful.
+          </p>
 
-        {/* faint leaf pattern */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 top-0 h-[380px] -z-10 opacity-15 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(24px 24px at 16px 16px, rgba(34,197,94,0.25) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-          }}
-        />
-
-        {/* NAV */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between text-emerald-50">
-          <div className="inline-flex items-center gap-2 font-semibold">
-            <Leaf className="h-5 w-5 text-emerald-300" />
-            <span>{NAME}</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#projects" className="hover:underline underline-offset-4">
-              Projects
-            </a>
-            <a href="#experience" className="hover:underline underline-offset-4">
-              Experience
-            </a>
-            <a href="#coursework" className="hover:underline underline-offset-4">
-              Coursework
-            </a>
-            <a href="#skills" className="hover:underline underline-offset-4">
-              Skills
-            </a>
-            <a href="#contact" className="hover:underline underline-offset-4">
-              Contact
-            </a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="secondary">
-              <a href={RESUME_URL} target="_blank" rel="noreferrer">
-                <FileText className="h-4 w-4 mr-2" />
-                Resume
-              </a>
-            </Button>
+          <div className="mt-4 flex flex-wrap gap-3">
             <Button asChild>
-              <a href={`mailto:${EMAIL}`}>
-                <Mail className="h-4 w-4 mr-2" />
-                Contact
+              <a href={RESUME_URL}>
+                <FileText className="mr-2 h-4 w-4" />
+                View Resume
+              </a>
+            </Button>
+            <Button asChild variant="secondary">
+              <ExternalLink href="https://github.com/KevinGhlee">
+                <Github className="mr-2 h-4 w-4" />
+                GitHub
+              </ExternalLink>
+            </Button>
+            <Button asChild variant="secondary">
+              <ExternalLink href="https://www.linkedin.com/in/kevinghlee/">
+                <Linkedin className="mr-2 h-4 w-4" />
+                LinkedIn
+              </ExternalLink>
+            </Button>
+            <Button asChild variant="outline">
+              <a href="mailto:kevin.ghlee@gmail.com">
+                <Mail className="mr-2 h-4 w-4" />
+                Email
               </a>
             </Button>
           </div>
         </div>
 
-        {/* HERO */}
-        <header className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-emerald-50">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-          >
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
-              {NAME}
-            </h1>
-            <p className="mt-2 text-lg/7 text-emerald-200">
-              {ROLE} •{" "}
-              <span className="inline-flex items-center">
-                <MapPin className="h-4 w-4 mx-1" />
-                {LOCATION}
-              </span>
-            </p>
+        {/* Simple nav */}
+        <nav className="hidden sm:flex gap-5 pt-2 text-sm">
+          <Link href="#projects" className="hover:underline">
+            Projects
+          </Link>
+          <Link href="#skills" className="hover:underline">
+            Skills
+          </Link>
+          <Link href="#education" className="hover:underline">
+            Education
+          </Link>
+          <a className="hover:underline" href={RESUME_URL}>
+            Resume
+          </a>
+          <a className="hover:underline" href="mailto:kevin.ghlee@gmail.com">
+            Contact
+          </a>
+        </nav>
+      </header>
 
-            <p className="mt-5 max-w-3xl text-emerald-100">
-              I build practical, fast software—mixing strong fundamentals with
-              data-driven interfaces and ML-backed tooling. Recently I’ve worked
-              on ad-analytics UIs with React/Three.js, DDoS mitigation research,
-              and interactive clinical simulations.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild className="bg-emerald-500 hover:bg-emerald-400">
-                <a href={RESUME_URL} target="_blank" rel="noreferrer">
-                  <FileText className="h-4 w-4 mr-2" />
-                  View Resume
-                </a>
-              </Button>
-              <Button asChild variant="secondary">
-                <a href={GITHUB_URL} target="_blank" rel="noreferrer">
-                  <Github className="h-4 w-4 mr-2" />
-                  GitHub
-                </a>
-              </Button>
-              <Button asChild variant="secondary">
-                <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-                  <Linkedin className="h-4 w-4 mr-2" />
-                  LinkedIn
-                </a>
-              </Button>
-              <Button asChild variant="outline">
-                <a href={`mailto:${EMAIL}`}>
-                  <Mail className="h-4 w-4 mr-2" />
-                  Email
-                </a>
-              </Button>
-            </div>
-          </motion.div>
-        </header>
-      </div>
-
-      {/* PROJECTS */}
-      <section
-        id="projects"
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12"
-      >
-        <SectionTitle icon={Code2} text="Projects" />
-        <div className="grid sm:grid-cols-2 gap-6">
+      {/* Projects */}
+      <section id="projects" className="space-y-6">
+        <h2 className="text-2xl font-semibold">Projects</h2>
+        <div className="grid gap-6 md:grid-cols-2">
           {PROJECTS.map((p) => (
-            <Card
-              key={p.title}
-              className="rounded-2xl border-emerald-100 shadow-sm overflow-hidden"
-            >
-              {p.image && (
-                <div className="relative w-full h-44">
-                  <Image
-                    src={p.image}
-                    alt={p.imageAlt ?? p.title}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+            <Card key={p.title} className="overflow-hidden">
+              <CardContent className="p-0">
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="h-44 w-full object-cover"
+                />
+                <div className="p-5">
+                  <h3 className="text-lg font-semibold">{p.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{p.blurb}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {p.tags.map((t) => (
+                      <Badge key={t} variant="secondary">
+                        {t}
+                      </Badge>
+                    ))}
+                  </div>
+                  {p.repo && (
+                    <div className="pt-2">
+                      <ExternalLink
+                        href={p.repo}
+                        className="text-sm underline underline-offset-4"
+                      >
+                        View repo
+                      </ExternalLink>
+                    </div>
+                  )}
                 </div>
-              )}
-              <CardHeader>
-                <CardTitle className="text-lg">{p.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-700">{p.blurb}</p>
-                <div className="flex flex-wrap gap-2">
-                  {p.tags.map((t) => (
-                    <Pill key={t} text={t} />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500">{p.impact}</p>
-                {false && (
-                  <a
-                    className="inline-flex items-center text-sm underline underline-offset-4"
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View repo <ExternalLink className="h-4 w-4 ml-1" />
-                  </a>
-                )}
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      {/* EXPERIENCE */}
-      <section
-        id="experience"
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12"
-      >
-        <SectionTitle icon={Leaf} text="Experience" />
-        <div className="space-y-4">
-          {EXPERIENCE.map((e) => (
-            <Card key={e.company} className="rounded-2xl">
-              <CardHeader className="pb-2">
-                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
-                  <CardTitle className="text-xl">
-                    {e.role} • {e.company}
-                  </CardTitle>
-                  <span className="text-sm text-gray-500">{e.when}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                  {e.bullets.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ul>
+      {/* Skills */}
+      <section id="skills" className="space-y-4">
+        <h2 className="text-2xl font-semibold">Skills</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          {Object.entries(SKILLS).map(([group, items]) => (
+            <Card key={group}>
+              <CardContent className="p-5">
+                <h3 className="font-medium">{group}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {items.join(' • ')}
+                </p>
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      {/* COURSEWORK */}
-      <section
-        id="coursework"
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12"
-      >
-        <SectionTitle icon={Leaf} text="Coursework" />
-        <Card className="rounded-2xl">
-          <CardContent className="py-5">
-            <div className="grid sm:grid-cols-2 gap-6">
+      {/* Education */}
+      <section id="education" className="space-y-2">
+        <h2 className="text-2xl font-semibold">Education</h2>
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium mb-2">Completed</div>
-                <div className="flex flex-wrap gap-2">
-                  {COURSEWORK.completed.map((c) => (
-                    <Pill key={c} text={c} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="font-medium mb-2">Currently taking</div>
-                <div className="flex flex-wrap gap-2">
-                  {COURSEWORK.current.map((c) => (
-                    <Pill key={c} text={c} />
-                  ))}
-                </div>
+                <p className="font-medium">Dartmouth College</p>
+                <p className="text-sm text-muted-foreground">
+                  B.S. in Computer Science • Relevant Coursework:
+                </p>
               </div>
             </div>
+            <ul className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 text-sm">
+              {COURSEWORK.map((c) => (
+                <li key={c}>• {c}</li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       </section>
 
-      {/* SKILLS */}
-      <section
-        id="skills"
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12"
-      >
-        <SectionTitle icon={Leaf} text="Skills" />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SKILLS.map((g) => (
-            <Card key={g.name} className="rounded-2xl">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{g.name}</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
-                {g.items.map((i) => (
-                  <Pill key={i} text={i} />
-                ))}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* CONTACT */}
-      <section
-        id="contact"
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12"
-      >
-        <SectionTitle icon={Leaf} text="Contact" />
-        <div className="flex flex-wrap items-center gap-3">
-          <Button asChild>
-            <a href={`mailto:${EMAIL}`}>
-              <Mail className="h-4 w-4 mr-2" />
-              {EMAIL}
-            </a>
-          </Button>
-          <Button asChild variant="secondary">
-            <a href={GITHUB_URL} target="_blank" rel="noreferrer">
-              <Github className="h-4 w-4 mr-2" />
-              GitHub
-            </a>
-          </Button>
-          <Button asChild variant="secondary">
-            <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-              <Linkedin className="h-4 w-4 mr-2" />
-              LinkedIn
-            </a>
-          </Button>
-        </div>
-      </section>
-
-      <footer className="py-10 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} {NAME}. Built with Next.js + Tailwind.
+      <footer className="pt-4 text-sm text-muted-foreground">
+        © {new Date().getFullYear()} Kevin Lee
       </footer>
     </main>
   );
