@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Fraunces } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const space = Space_Grotesk({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const fraunces = Fraunces({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
       "Dartmouth CS student building software and ML-powered tools.",
     url: "https://kevinghlee.me",
     siteName: "Kevin Lee",
-    images: ["/og.png"], // optional: add /public/og.png (1200x630)
+    images: ["/og.png"],
   },
   twitter: {
     card: "summary_large_image",
@@ -42,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${space.variable} ${fraunces.variable}`}>
-      <body className="font-sans bg-background text-foreground">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="bg-background text-foreground">
         {children}
       </body>
     </html>
