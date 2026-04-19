@@ -15,7 +15,7 @@ export function CommandPalette() {
       id: "resume",
       title: "View Resume",
       icon: FileText,
-      action: () => window.open("/resume/Kevin_Lee_RESUME.pdf", "_blank"),
+      action: () => window.open("/resume/Kevin_Geonhun_Lee_Resume.pdf", "_blank"),
     },
     {
       id: "email",

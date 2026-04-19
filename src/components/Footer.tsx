@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { MagneticButton } from "./MagneticButton";
 
-const RESUME_URL = "/resume/Kevin_Lee_RESUME.pdf";
+const RESUME_URL = "/resume/Kevin_Geonhun_Lee_Resume.pdf";
 const GITHUB_URL = "https://github.com/KevinGhlee";
 const LINKEDIN_URL = "https://www.linkedin.com/in/kevin-ghlee";
 const EMAIL = "kevin.ghlee@gmail.com";

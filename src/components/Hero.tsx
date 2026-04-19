@@ -7,7 +7,7 @@ import { DotGrid } from "./DotGrid";
 import { GradientMesh } from "./GradientMesh";
 import { MagneticButton } from "./MagneticButton";
 
-const RESUME_URL = "/resume/Kevin_Lee_RESUME.pdf";
+const RESUME_URL = "/resume/Kevin_Geonhun_Lee_Resume.pdf";
 const GITHUB_URL = "https://github.com/KevinGhlee";
 const LINKEDIN_URL = "https://www.linkedin.com/in/kevin-ghlee";
 const EMAIL = "kevin.ghlee@gmail.com";
@@ -89,7 +89,7 @@ export function Hero() {
           style={{ opacity: subOpacity, y: subY }}
           className="text-[14px] text-[#888] mb-12"
         >
-          CS at Dartmouth. Researching DDoS mitigation. Previously Hiossen Implant.
+          CS at Dartmouth. Researching DDoS mitigation.
         </motion.p>
 
         <motion.div
