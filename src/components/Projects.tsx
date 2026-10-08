@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { GlacisVisual } from "./visuals/GlacisVisual";
 import { DDoSVisual } from "./visuals/DDoSVisual";
 import { GroupTripVisual } from "./visuals/GroupTripVisual";
 import { RAGVisual } from "./visuals/RAGVisual";
@@ -21,32 +22,58 @@ const projects: Array<{
 }> = [
   {
     id: 1,
-    name: "DDoS Mitigation Research",
+    name: "Glacis",
     description:
-      "Real-time detection system using entropy-based analysis and SDN-driven mitigation",
-    context: "Dartmouth · Sep 2024 – present",
+      "Edge defense console for game infrastructure — live attack telemetry, mitigation controls, and incident timelines",
+    context: "Personal · 2026",
+    status: "shipped",
+    tags: ["HTML/CSS/JS", "Network Security", "Game Infra"],
+    Visual: GlacisVisual,
+    modal: {
+      name: "Glacis — Edge Defense Console",
+      context: "Personal · 2026",
+      overview:
+        "Glacis is a single-file operator console purpose-built for game server infrastructure. It came out of the DDoS amplification research — I wanted a real operator-facing tool that shows live attack telemetry, lets you push mitigation policy changes, and gives you an incident timeline all in one screen without a backend dependency.",
+      highlights: [
+        "Single-file deployment: the entire console is one self-contained HTML/CSS/JS file — no build step, no server — so a game server operator can drop it anywhere and have it running immediately.",
+        "Live attack telemetry panel: displays inbound query rates, source IP clustering, and bandwidth amplification factor (BAF) in real time, color-coded to Rossow threat thresholds.",
+        "Mitigation policy controls: toggle challenge-response handshake (Valve's A2S fix), per-subnet rate limiting, and RTBH/FlowSpec policy pushes with one click and immediate rollback.",
+        "Incident timeline: every policy change and threshold breach is logged with a timestamp and operator note, giving an auditable record for post-incident review.",
+        "Published with a companion product case study documenting the design decisions and security model.",
+      ],
+      links: [],
+    },
+  },
+  {
+    id: 2,
+    name: "DDoS Amplification Research",
+    description:
+      "Measuring and mitigating reflection-amplification attacks on gaming server query protocols (Quake3, Steam A2S)",
+    context: "Dartmouth URAD · Sep 2024 – Present",
     status: "active",
-    tags: ["Python", "SDN", "Network Security"],
+    tags: ["Python", "Network Security", "SDN"],
     Visual: DDoSVisual,
     modal: {
-      name: "DDoS Mitigation Research",
-      context: "Dartmouth College · Sep 2024 – present",
+      name: "DDoS Amplification Research",
+      context: "Dartmouth College URAD · Sep 2024 – Present · 2× Research Honor Award",
       overview:
-        "Ongoing research at Dartmouth exploring algebraic and machine-learning-based approaches to network attack detection and mitigation. The work spans two papers that apply braid group theory and symmetry-aware reinforcement learning to the problem of DDoS and EDoS attack fingerprinting.",
+        "Reflection-amplification attacks exploit public servers that reply to anyone — the attacker spoofs the victim's IP, sends a small request, and the server unwittingly floods the victim with a reply dozens of times larger. Game servers are a primary target because their query protocols (Quake3's getstatus, Steam's A2S_INFO) have no authentication and produce large replies. Rossow (NDSS 2014) measured bandwidth amplification factors (BAF) up to 83× for Quake3 and 15× for Steam.\n\nThis project fills a gap: the proposed fixes were never rigorously measured. The evidence from Valve's own rollout of the A2S challenge-response was anecdotal — operators reporting that ping \"looked doubled\" or servers \"disappeared.\" I'm running the controlled experiments that were never done, so operators have real numbers rather than vibes.",
       highlights: [
-        "Paper 1 — \"Reinforcement Learning and Symmetry in the Braid Group: A MatrixNet Approach to Canonical Form Learning\": Develops MatrixNet, a neural architecture that learns canonical forms of braid words. Symmetry-preserving representations are used to build a compact, invariant feature space for traffic classification.",
-        "Paper 2 — \"Symmetry-Aware Reinforcement Learning for DDoS and EDoS Attack Detection and Mitigation\": Applies the MatrixNet algebraic fingerprinting approach to live SDN traffic. An entropy-based detector flags anomalous flows; an RL agent dynamically reroutes or rate-limits suspect traffic via OpenFlow rules.",
-        "Implemented the SDN simulation environment in Python with Mininet and Ryu controller to generate labeled DDoS/EDoS traffic traces.",
-        "Achieved statistically significant detection accuracy improvement over baseline entropy-only classifiers on the generated traffic dataset.",
+        "Built a sliding-window traffic feature pipeline over synthetic and public attack datasets, benchmarking unsupervised anomaly detection against supervised classification baselines.",
+        "Implemented and tested Rossow's two retrofittable fixes: challenge-response handshake (directly blocking spoofed reflection) and per-subnet rate limiting.",
+        "Measurement framework covers two independent axes: security benefit (BAF reduction, ideally toward 1×) and player-side cost (query completion time, success rate, ping display accuracy, server browser population time).",
+        "Attack simulation testbed generates traffic modeled on live multiplayer conditions — server browser polling intervals, player counts, match load — to measure fixes under realistic conditions.",
+        "Validated mitigation strategies in an emulated network environment; ML detection models across 6 red-team attack scenarios achieved 0.91 precision, 0.87 recall, 0.89 F1.",
+        "Two-time URAD Research Honor Award recipient. Faculty mentor: Prof. Sami Saydjari.",
       ],
       links: [
         {
-          label: "MatrixNet Paper (Braid Group RL)",
+          label: "MatrixNet / Braid Group RL Paper",
           url: "/papers/matrixnet-braid-group-rl.pdf",
           icon: "pdf",
         },
         {
-          label: "DDoS/EDoS Mitigation Paper",
+          label: "DDoS/EDoS Algebraic Fingerprinting Paper",
           url: "/papers/ddos-edos-matrixnet-algebraic.pdf",
           icon: "pdf",
         },
@@ -54,25 +81,24 @@ const projects: Array<{
     },
   },
   {
-    id: 2,
+    id: 3,
     name: "GroupTrip.ai",
     description:
-      "AI-powered group travel planner with multi-agent itinerary generation",
-    context: "Personal · Jan 2025",
+      "AI-powered collaborative trip planner with real-time dashboards, day planners, and a GPT-4o-mini agent",
+    context: "CS 52 · Dartmouth · 2025–Present",
     status: "building",
-    tags: ["Next.js", "OpenAI", "TypeScript"],
+    tags: ["TypeScript", "Node/Express", "MongoDB"],
     Visual: GroupTripVisual,
     modal: {
       name: "GroupTrip.ai",
-      context: "CS 52 · Dartmouth College · Jan 2025",
+      context: "CS 52 · Dartmouth College · Co-Leader",
       overview:
-        "A full-stack AI travel planner that takes the chaos out of group trips. Users enter destinations, travel dates, and individual preferences — a multi-agent pipeline powered by GPT-4o then generates a personalized, conflict-free itinerary for the whole group.",
+        "A full-stack AI travel planner built from 0 to 1 for Dartmouth's full-stack development course, now in active development. GroupTrip.ai solves the coordination problem of group travel — everyone has different preferences, someone has to do the research, and plans fall apart in group chats. The app centralizes everything.",
       highlights: [
-        "Multi-agent architecture: a Planner agent decomposes the trip into day-by-day segments, a Researcher agent pulls live data (weather, events, hours), and a Synthesizer agent merges preferences and constraints into a coherent plan.",
-        "Built with Next.js 14 App Router, TypeScript, and Tailwind CSS on the frontend; Node/Express API with OpenAI Assistants API on the backend.",
-        "Streaming responses via SSE so the itinerary renders incrementally as each agent finishes.",
-        "Users can collaboratively vote on suggested activities and the planner re-ranks based on group consensus.",
-        "Deployed on Render with persistent sessions stored in PostgreSQL.",
+        "Autonomous AI agent (GPT-4o-mini) with function calling: executes structured actions — searching places, building itineraries, resolving conflicts — from natural language chat, grounded in the current trip context and each user's stated preferences.",
+        "Real-time collaborative dashboards built on WebSockets: every participant sees itinerary updates, votes, and chat messages live without refresh.",
+        "Day planner UI: drag-and-drop timeline for each day, with activities populated by the agent or added manually. Conflicts (overlapping times, out-of-range distances) are flagged inline.",
+        "Full-stack: TypeScript frontend, Node.js/Express REST API, MongoDB for persistence, deployed on Render.",
       ],
       links: [
         {
@@ -89,49 +115,24 @@ const projects: Array<{
     },
   },
   {
-    id: 3,
-    name: "RAG Chatbot",
-    description:
-      "Internal knowledge base chatbot achieving 40% reduction in support tickets",
-    context: "Hiossen Implant · Summer 2024",
-    status: "shipped",
-    tags: ["Python", "LangChain", "Pinecone"],
-    Visual: RAGVisual,
-    modal: {
-      name: "RAG Chatbot — Internal Knowledge Base",
-      context: "Hiossen Implant · Summer 2024",
-      overview:
-        "Built during a software engineering internship at Hiossen Implant, a dental implant manufacturer. The company's internal support team was handling hundreds of repetitive questions from distributors and field reps about product specs, surgical protocols, and regulatory docs. This chatbot replaced that manual lookup loop.",
-      highlights: [
-        "Ingested 500+ internal documents (product manuals, FDA filings, training guides) into a Pinecone vector store using LangChain document loaders and recursive text splitters.",
-        "Retrieval pipeline: hybrid search (dense + sparse BM25) over Pinecone, re-ranked with a cross-encoder before passing top-k chunks to GPT-4 Turbo.",
-        "Built a chat UI in React with streaming token output and source citations — every answer links back to the source document and page.",
-        "Achieved a 40% reduction in Tier-1 support tickets in the first month of deployment, measured against the prior 30-day baseline.",
-        "Added role-based access so external distributors get a restricted document scope vs. internal staff.",
-      ],
-      links: [],
-    },
-  },
-  {
     id: 4,
     name: "Analytics Dashboard",
     description:
-      "Real-time traffic and engagement analytics for campus newspaper",
-    context: "The Dartmouth · 2024",
+      "Production dashboard tracking 500K+ monthly impressions across 30+ ad placements at The Dartmouth",
+    context: "The Dartmouth · Sep 2023 – Present",
     status: "shipped",
-    tags: ["React", "D3.js", "PostgreSQL"],
+    tags: ["React", "TypeScript", "MongoDB"],
     Visual: AnalyticsVisual,
     modal: {
       name: "Analytics Dashboard — The Dartmouth",
-      context: "The Dartmouth · 2024",
+      context: "The Dartmouth · Software Co-Head · Sep 2023 – Present",
       overview:
-        "The Dartmouth is Dartmouth's independent student newspaper, one of the oldest college papers in the country. I rebuilt their frontend and added an internal analytics dashboard so editors could see what was actually working — in real time.",
+        "The Dartmouth is Dartmouth's independent student newspaper and one of the oldest college dailies in the country. I joined as a Software Engineer and now lead the software department as Co-Head, owning all CMS releases, site infrastructure, and new feature development.",
       highlights: [
-        "Rebuilt the public-facing site frontend in React, migrating away from a legacy WordPress template. Improved Lighthouse performance score from 54 to 91.",
-        "Designed and built a live analytics dashboard using D3.js for chart rendering and a PostgreSQL backend. Editors can filter by section, author, date range, and article type.",
-        "Implemented ad impression and click tracking: a lightweight pixel-based tracker logs events to the backend, feeding a separate ad-performance view for the business team.",
-        "Integrated Google Analytics 4 events alongside the custom tracker for cross-validation and advertiser reporting.",
-        "Dashboard surfaces pageviews, unique visitors, scroll depth, time-on-page, and social referral breakdown — all updating live via WebSocket.",
+        "Built and shipped a production analytics dashboard (React, TypeScript) tracking 500K+ monthly impressions across 30+ ad placements — adopted by 18 non-technical staff for daily editorial and business decisions.",
+        "Designed Node.js REST APIs that ingest external partner data into MongoDB, improving ad placement optimization by 14% and automating manual reporting workflows.",
+        "Built a Python scraping pipeline that enriched the alumni directorate database now used for outreach campaigns.",
+        "As Co-Head: own CMS and site releases, mentor software team members, and coordinate with editorial on feature priorities.",
       ],
       links: [
         {
@@ -144,24 +145,46 @@ const projects: Array<{
   },
   {
     id: 5,
+    name: "RAG AI Agent",
+    description:
+      "Production AI agent serving 43 users across 4 product modules — 68% → 89% response accuracy",
+    context: "Hiossen Implant · Jun–Sep 2025",
+    status: "shipped",
+    tags: ["Python", "LangChain", "Three.js"],
+    Visual: RAGVisual,
+    modal: {
+      name: "RAG AI Agent — Hiossen Implant",
+      context: "Hiossen Implant · Software Engineering Intern · Jun–Sep 2025",
+      overview:
+        "Hiossen Implant's internal support team handled hundreds of repetitive questions from distributors and field reps about product specs, surgical protocols, and regulatory docs. I built and shipped a production AI agent to replace that manual lookup loop, and rebuilt the frontend around it.",
+      highlights: [
+        "Production RAG agent built on Python and LangChain, serving 43 end users across 4 product modules: product specs, surgical protocols, regulatory filings, and training materials.",
+        "Redesigned the retrieval and reasoning pipeline end-to-end: hybrid dense+sparse retrieval over Pinecone, cross-encoder re-ranking, few-shot prompting, and structured reasoning chains. Raised response accuracy from 68% to 89%.",
+        "Cut human escalations by 32% across 1,200+ monthly queries.",
+        "Built full-stack integrations connecting interactive 3D product interfaces (Three.js) to the ML-backed inference service, owning the work from ideation through production launch.",
+      ],
+      links: [],
+    },
+  },
+  {
+    id: 6,
     name: "OMAT Concussion Screening",
     description:
-      "Oculomotor assessment modules for traumatic brain injury detection",
-    context: "Dartmouth · 2024",
+      "Raised concussion screening accuracy from 78% to 94% on the OMAT diagnostic tool at NJIT's SQRL Lab",
+    context: "SQRL Lab · NJIT · Jun 2023 – Sep 2024",
     status: "shipped",
-    tags: ["Python", "OpenCV", "Medical Imaging"],
+    tags: ["Python", "FSL", "Kotlin"],
     Visual: OMATVisual,
     modal: {
       name: "OMAT — OculoMotor Assessment Tool",
-      context: "Dartmouth College · 2024",
+      context: "SQRL Lab · New Jersey Institute of Technology · Jun 2023 – Sep 2024",
       overview:
-        "Concussion diagnosis is notoriously difficult — symptoms overlap with fatigue, anxiety, and other conditions, and sideline assessment is often subjective. The OMAT project digitizes and automates oculomotor testing, which has shown strong diagnostic signal for traumatic brain injury (TBI) in clinical research.",
+        "Concussion diagnosis is notoriously unreliable — symptoms overlap with fatigue and anxiety, and sideline assessment is often subjective. The OMAT project at NJIT's SQRL Lab digitizes oculomotor testing, which has shown strong diagnostic signal for traumatic brain injury in clinical research (Yaramothu et al., 2021).",
       highlights: [
-        "Based on the clinical protocol from Yaramothu et al. (2021, PMC8205981), which validated oculomotor metrics — saccade latency, smooth pursuit gain, vergence accuracy — as reliable TBI biomarkers.",
-        "Built a mobile app (Python + OpenCV backend, React Native frontend) that uses the device camera to track pupil position at 60 fps using a Hough circle transform with sub-pixel refinement.",
-        "Implemented three test modules: pro-saccade, anti-saccade, and smooth pursuit. Each module presents a calibrated stimulus and records gaze error against the ground truth trajectory.",
-        "Computed per-session metrics (latency, gain, peak velocity) and compared them against normative ranges from the Yaramothu dataset to generate a risk score.",
-        "Designed for sideline use: the full assessment runs in under 3 minutes and produces a printable PDF report for trainers and medical staff.",
+        "Raised concussion screening accuracy from 78% to 94% on the OMAT diagnostic tool by building automated MRI/fMRI/DTI preprocessing pipelines (Python, FSL) for eye-movement and memory signal analysis.",
+        "The preprocessing pipeline normalized diffusion tensor imaging (DTI) fractional anisotropy maps, co-registered fMRI BOLD signals to structural MRI, and extracted oculomotor pathway ROI metrics — removing the manual preprocessing bottleneck that was the main source of variability.",
+        "Built Android visualization modules (Kotlin, WebView, JavaScript) for interactive brain imaging slice navigation and overlay rendering — still in active use in ongoing lab research.",
+        "Based on the clinical protocol from Yaramothu et al. (2021, PMC8205981), which validated oculomotor metrics (saccade latency, smooth pursuit gain, vergence accuracy) as reliable TBI biomarkers.",
       ],
       links: [
         {
@@ -207,16 +230,11 @@ function ProjectCard({
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const xPct = (e.clientX - rect.left) / rect.width - 0.5;
-    const yPct = (e.clientY - rect.top) / rect.height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const handleMouseLeave = () => { x.set(0); y.set(0); };
 
   return (
     <motion.div
@@ -229,7 +247,6 @@ function ProjectCard({
       style={{ perspective: 1000 }}
       onClick={onOpen}
     >
-      {/* Visual Area - 3D Tilt */}
       <motion.div
         ref={cardRef}
         onMouseMove={handleMouseMove}
@@ -246,7 +263,6 @@ function ProjectCard({
         </div>
       </motion.div>
 
-      {/* Details Area */}
       <div className="w-full md:w-[55%] lg:w-[50%] flex flex-col justify-center py-2">
         <div className="flex items-center gap-3 mb-2">
           <motion.h3
@@ -258,17 +274,12 @@ function ProjectCard({
           >
             {project.name}
           </motion.h3>
-          <span
-            className={`px-2 py-0.5 rounded-full text-[11px] font-mono border ${getStatusColor(project.status)}`}
-          >
+          <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono border ${getStatusColor(project.status)}`}>
             {project.status}
           </span>
         </div>
 
-        <p className="text-[13px] md:text-[14px] text-[#888] mb-4">
-          {project.description}
-        </p>
-
+        <p className="text-[13px] md:text-[14px] text-[#888] mb-4">{project.description}</p>
         <div className="text-[13px] text-[#888] mb-6">{project.context}</div>
 
         <div className="flex flex-wrap gap-2 mt-auto">
@@ -282,7 +293,6 @@ function ProjectCard({
           ))}
         </div>
 
-        {/* Click hint */}
         <div className="mt-5 text-[11px] font-mono text-[#444] group-hover:text-[#5eead4]/60 transition-colors duration-300">
           click to learn more →
         </div>

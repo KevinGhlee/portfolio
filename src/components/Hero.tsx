@@ -89,7 +89,7 @@ export function Hero() {
           style={{ opacity: subOpacity, y: subY }}
           className="text-[14px] text-[#888] mb-12"
         >
-          CS at Dartmouth. Researching DDoS mitigation.
+          CS at Dartmouth. Evaluating Gemini at Turing. Researching DDoS mitigation.
         </motion.p>
 
         <motion.div

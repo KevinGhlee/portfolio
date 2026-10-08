@@ -8,6 +8,7 @@ import { CursorSpotlight } from "@/components/CursorSpotlight";
 import { Marquee } from "@/components/Marquee";
 import { CommandPalette } from "@/components/CommandPalette";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { Experience } from "@/components/Experience";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <main>
         <Hero />
         <Marquee />
+        <Experience />
         <Projects />
       </main>
       <Footer />
